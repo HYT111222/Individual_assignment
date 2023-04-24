@@ -125,7 +125,7 @@ public class EnterServiceImpl extends ServiceImpl<EnterMapper, StockIn> implemen
             List<Parcel> temp = new ArrayList<>();
             Parcel p = new Parcel(parcelLists[i].getParcel_id(),parcelLists[i].getPlace());
             temp.add(p);
-            for (int j =1 ; j<parcelLists.length;j++){
+            for (int j =i+1 ; j<parcelLists.length;j++){
                 if(parcelLists[i].getPlace().equals(parcelLists[j].getPlace())){
                     Parcel p1 = new Parcel(parcelLists[j].getParcel_id(),parcelLists[j].getPlace());
                     temp.add(p1);
@@ -204,7 +204,9 @@ public class EnterServiceImpl extends ServiceImpl<EnterMapper, StockIn> implemen
             for (int i =0 ;i<avgList.size();i++){
                 if(avgList.get(i).getStatus()){
                     avgList.get(i).setStatus(false);//什么时候改回来
+                    System.out.println("parcels"+parcels.size());
                     List<parcelReturn> parcelReturn = distributeLocation(parcels,warehouse_structure,enterParam.getToken());
+                    System.out.println(parcelReturn.size());
                     avgList.get(i).setParcelList(parcelReturn);
                     int[] start={0,0};
                     int x = parcelReturn.size();
