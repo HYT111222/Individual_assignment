@@ -6,12 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-/**
- * FileNmae: GlobalCorsConfig
- * Data: 2023/04/03
- * Description: 该类用于全局配置,配置跨域请求
- */
-
 @Configuration
 public class GlobalCorsConfig {
     @Bean
