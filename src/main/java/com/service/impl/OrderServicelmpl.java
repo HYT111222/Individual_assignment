@@ -26,6 +26,7 @@ import java.util.List;
  * @Date 2023/5/22
  * @Desc
  */
+//eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxNDc5Mzg5ODYzOSJ9.5uqrYIJwAU0QxsG-hJlpg5FSprLxoQNxA68FDecE7-w
 @Service
 //@Transactional
 @AllArgsConstructor
@@ -38,7 +39,7 @@ public class OrderServicelmpl extends ServiceImpl<orderMapper, order> implements
     @Override
     public R createOrder(createParam createParam,String token) {
        String phone = JWT.decode(token).getAudience().get(0);
-        try{
+        //try{
             order order = new order();
             order.setFromname(createParam.getFrom_user());
             order.setFromphone(createParam.getFrom_phone());
@@ -59,16 +60,16 @@ public class OrderServicelmpl extends ServiceImpl<orderMapper, order> implements
             queryWrapper.eq("phone",phone).eq("createtime",time);
             order orderTemp=orderMapper.selectOne(queryWrapper);
             return R.ok().data("shippment_id",orderTemp.getId());
-        }catch (Exception e){
-            return R.error();
-        }
+//        }catch (Exception e){
+//            return R.error();
+//        }
     }
     //根据承运商查
     @Override
     public  R searchOrder(String carrier,String token){
         String phone = JWT.decode(token).getAudience().get(0);
         QueryWrapper<order> queryWrapper=new QueryWrapper<>();
-        queryWrapper.eq("carrier",carrier).eq("phone",phone);
+        queryWrapper.eq("carrpeople",carrier).eq("phone",phone);
         try{
             List<order> listOrder=orderMapper.selectList(queryWrapper);
 

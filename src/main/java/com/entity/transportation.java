@@ -18,5 +18,5 @@ public class transportation{
 
     private String sitename;//主键
 
-    private String siteAttribute;//站点性质
+    private String siteattribute;//站点性质
 }
