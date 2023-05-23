@@ -12,5 +12,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class searchParam {
     private String carrier;
-    private String shippment_id;
+//    private String shippment_id;
 }

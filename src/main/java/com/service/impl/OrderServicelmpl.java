@@ -5,9 +5,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.entity.User;
 import com.service.OrderService;
-import com.entity.order;
-import com.mapper.orderMapper;
+import com.entity.*;
+import com.mapper.*;
 import com.vo.R;
+import com.pojo.*;
 
 import javax.servlet.http.HttpServletRequest;
 import com.vo.param.createParam;
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.mapper.orderMapper;
 import com.service.impl.global;
+
+import java.util.List;
 
 /**
  * @Auther HYT
@@ -30,6 +33,8 @@ public class OrderServicelmpl extends ServiceImpl<orderMapper, order> implements
 
     @Autowired
     private final orderMapper orderMapper;
+    @Autowired
+    private final transportationMapper transportationMapper;
     @Override
     public R createOrder(createParam createParam,String token) {
        String phone = JWT.decode(token).getAudience().get(0);
@@ -58,9 +63,83 @@ public class OrderServicelmpl extends ServiceImpl<orderMapper, order> implements
             return R.error();
         }
     }
+    //根据承运商查
     @Override
-    public  R searchOrder(searchParam searchParam){
+    public  R searchOrder(String carrier,String token){
+        String phone = JWT.decode(token).getAudience().get(0);
+        QueryWrapper<order> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("carrier",carrier).eq("phone",phone);
+        try{
+            List<order> listOrder=orderMapper.selectList(queryWrapper);
 
-        return R.ok();
+                for(int i=0;i<listOrder.size();i++){
+                    searchReturnForm result=new searchReturnForm();
+                    result.setFrom_user(listOrder.get(i).getFromname());
+                    result.setFrom_phone(listOrder.get(i).getFromphone());
+                    result.setFrom_addr(listOrder.get(i).getFromaddr());
+                    result.setTo_user(listOrder.get(i).getToname());
+                    result.setTo_phone(listOrder.get(i).getTophone());
+                    result.setTo_addr(listOrder.get(i).getToaddr());
+                    result.setTransportation_state(listOrder.get(i).getSttatus());
+                    QueryWrapper<transportation> transportationQueryWrapper = new QueryWrapper<>();
+                    transportationQueryWrapper.eq("id",listOrder.get(i).getId());
+                    List<transportation> tampTransportation=transportationMapper.selectList(transportationQueryWrapper);
+                    result.setTransportation(tampTransportation);
+                    return R.ok().data("searchCarrierList",result);
+                }
+
+                return R.ok().data("searchCarrierList",null);
+
+        }catch (Exception e){
+            return R.error().message("发生异常："+e.toString());
+        }
+    }
+
+    //根据id查包裹
+    @Override
+    public R searchParcelID(String id) {
+        QueryWrapper<order> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("id",id);
+        try{
+            if(orderMapper.exists(queryWrapper)){
+                order order=orderMapper.selectOne(queryWrapper);
+                searchReturnForm result=new searchReturnForm();
+                result.setFrom_user(order.getFromname());
+                result.setFrom_phone(order.getFromphone());
+                result.setFrom_addr(order.getFromaddr());
+                result.setTo_user(order.getToname());
+                result.setTo_phone(order.getTophone());
+                result.setTo_addr(order.getToaddr());
+                result.setTransportation_state(order.getSttatus());
+                QueryWrapper<transportation> transportationQueryWrapper = new QueryWrapper<>();
+                transportationQueryWrapper.eq("id",id);
+                List<transportation> tampTransportation=transportationMapper.selectList(transportationQueryWrapper);
+                result.setTransportation(tampTransportation);
+                return R.ok().data("searchCarrierList",result);
+            }else {
+                return R.ok().message("该包裹不存在");
+            }
+        }catch (Exception e){
+            return R.error().message("发生异常："+e.toString());
+        }
+
+    }
+    //获取单个包裹物流
+    @Override
+    public R fetchTransportation(String id) {
+        QueryWrapper<transportation> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("id",id);
+        QueryWrapper<order> queryWrapperOrder=new QueryWrapper<>();
+        queryWrapperOrder.eq("id",id);
+        try {
+            if (orderMapper.exists(queryWrapperOrder)) {
+                List<transportation> tampTransportation=transportationMapper.selectList(queryWrapper);
+                return R.ok().data("transprtation",tampTransportation);
+            }else {
+                return R.ok().message("该包裹不存在");
+            }
+        }catch (Exception e){
+            return R.error().message(e.toString());
+        }
     }
 }

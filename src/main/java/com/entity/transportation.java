@@ -10,11 +10,13 @@ import lombok.Data;
 @TableName("shipment")
 public class transportation{
 
-    private int id; // 主键
+    private int id; // 主键包裹id
 
     private String intime;
 
     private String outtime;
 
     private String sitename;//主键
+
+    private String siteAttribute;//站点性质
 }
